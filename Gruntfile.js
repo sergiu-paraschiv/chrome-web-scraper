@@ -47,7 +47,7 @@ module.exports = function(grunt) {
             beforeBuild: {
                 files: [
                     { expand: true, flatten: true, src: ['app/views/*'], dest: 'build/views/' },
-                    { expand: true, flatten: true, src: ['popup.html', 'icon.24.png', 'manifest.json'], dest: 'build'}
+                    { expand: true, flatten: true, src: ['popup.html', 'blank.html', 'icon.24.png', 'manifest.json', 'dom.js'], dest: 'build'}
                 ]
             },
 

@@ -1,6 +1,6 @@
 <div ng-repeat="selector in task.selectors">
-    <a href="#/task/{{task.id}}/selector/$index">{{selector.name}}</a>
-    <a href="" ng-click="removeSelector($index)">[x]</a>
+    <a href="#/task/{{task.id}}/selector/{{$index}}">{{selector.name}}</a>
+    <a href="" ng-click="remove($index)">[x]</a>
 </div>
 
 <a href="#/task/{{task.id}}/selector">new selector</a>

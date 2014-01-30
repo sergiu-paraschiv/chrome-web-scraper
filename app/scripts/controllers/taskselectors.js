@@ -11,7 +11,7 @@
         function ($scope, $routeParams, tasksService) {
             $scope.task = tasksService.find($routeParams.taskId);
             
-            $scope.removeSelector = function(index) {
+            $scope.remove = function(index) {
                 $scope.task.selectors.splice(index, 1);
             };
         }

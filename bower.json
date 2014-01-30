@@ -6,6 +6,7 @@
     "angular-route": "~1.2.10",
     "lodash": "~2.4.1",
     "jquery": "~2.1.0",
-    "ngstorage": "~0.3.0"
+    "ngstorage": "~0.3.0",
+    "jquery-xpath": "https://github.com/ilinsky/jquery-xpath.git#~0.2.5"
   }
 }
