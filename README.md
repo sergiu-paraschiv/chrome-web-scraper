@@ -1,5 +1,4 @@
 chrome-web-scraper
 ==================
 
-Description: "Chrome extension that can scrape web pages."
-Author: sergiuspk@gmail.com
+A Chrome extension for scraping web pages.
