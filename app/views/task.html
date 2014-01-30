@@ -1,0 +1,18 @@
+<div>
+    <label>
+        Name
+        <input type="text" ng-model="task.name" />
+    </label>
+</div>
+
+<div>
+    <label>
+        URL
+        <input type="text" ng-model="task.url" />
+    </label>
+</div>
+
+<a ng-show="!task.id" href="#/" ng-click="save()">add</a>
+<a ng-show="task.id" href="#/" ng-click="remove()">remove</a>
+<a ng-show="task.id" href="#/task/{{task.id}}/selectors"> | edit selectors</a>
+<a href="#/"> | back to tasks list</a>

@@ -1,0 +1,11 @@
+{
+  "name": "chrome-web-scraper",
+  "version": "0.1",
+  "dependencies": {
+    "angular": "~1.2.10",
+    "angular-route": "~1.2.10",
+    "lodash": "~2.4.1",
+    "jquery": "~2.1.0",
+    "ngstorage": "~0.3.0"
+  }
+}

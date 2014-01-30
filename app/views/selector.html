@@ -1,0 +1,16 @@
+<div>
+    <label>
+        Name
+        <input type="text" ng-model="selector.name" />
+    </label>
+</div>
+
+<div>
+    <label>
+        XPath
+        <input type="text" ng-model="selector.xpath" />
+    </label>
+</div>
+
+<a ng-show="adding" href="#/task/{{task.id}}/selectors" ng-click="save()">add</a>
+<a href="#/task/{{task.id}}/selectors"> | back to selectors list</a>
