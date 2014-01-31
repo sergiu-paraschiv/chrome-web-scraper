@@ -3,10 +3,10 @@
    
     this.Main.controller('TasksCtrl', [
         '$scope',
-        'TasksService',
+        'EntitiesService',
         
-        function ($scope, tasksService) {
-            $scope.tasks = tasksService.all();
+        function ($scope, entitiesService) {
+            $scope.tasks = entitiesService.query('Task');
         }
     ]);
         

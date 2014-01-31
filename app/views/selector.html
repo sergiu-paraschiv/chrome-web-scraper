@@ -23,5 +23,6 @@
     </label>
 </div>
 
-<a ng-show="adding" href="#/task/{{task.id}}/selectors" ng-click="add()">add</a>
-<a href="#/task/{{task.id}}/selectors"> | back to selectors list</a>
+<a ng-show="adding" href="#/selectors/{{parent.id}}" ng-click="add()">add</a>
+<a ng-show="!adding" href="#/selectors/{{selector.id}}"> | edit selectors</a>
+<a href="#/selectors/{{parent.id}}"> | back</a>

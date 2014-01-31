@@ -6,30 +6,40 @@
     this.Main.controller('TaskCtrl', [
         '$scope',
         '$routeParams',
-        'TasksService',
-        'BrowserService',
+        'EntitiesService',
+        'ScraperService',
         
-        function ($scope, $routeParams, tasksService, browserService) {
+        function ($scope, $routeParams, entitiesService, scraperService) {
             if($routeParams.taskId !== undefined) {
-                $scope.task = tasksService.find($routeParams.taskId);
+                $scope.task = entitiesService.find($routeParams.taskId);
             }
             else {
                 $scope.task = new Task();
             }
             
+            function removeSelectors(parent) {
+                if(parent.selectors !== undefined) {
+                    for(var selector in parent.selectors) {
+                        removeSelectors(selector);
+                        
+                        entitiesService.remove(selector.id);
+                    }
+                }
+            }
+            
             $scope.add = function() {
-                tasksService.put($scope.task);
+                entitiesService.put($scope.task, 'Task');
             };
             
             $scope.remove = function() {
-                tasksService.remove($scope.task.id);
+                removeSelectors($scope.task);
+               
+                entitiesService.remove($scope.task.id);
             };
             
             $scope.run = function() {
-                browserService.loadURL($scope.task.url, function(htmlString) {
-                    var doc = (new DOMParser()).parseFromString(htmlString, 'text/html');
-                    var links = $(doc).xpath('//a/@href');
-                    console.log(links);
+                scraperService.run($scope.task, function(data) {
+                    console.log(data);
                 });
             };
         }

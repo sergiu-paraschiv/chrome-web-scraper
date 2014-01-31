@@ -6,10 +6,11 @@
             BLANK_PAGE: 'chrome://newtab'
         },
         
-        SELECTOR: {            
+        SELECTOR: {
             ELEMENT: {label: 'Element', value: 'element'},
+            URL: {label: 'URL', value: 'url'},
             TEXT: {label: 'Text', value: 'text'},
-            URL: {label: 'URL', value: 'url'}
+            ATTRIBUTE: {label: 'Attribute', value: 'attribute'}
         }
     };
 

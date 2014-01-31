@@ -8,10 +8,12 @@
             data = {};
         }
         
+        this.id = data.id || undefined;
         this.name = data.name || '';
         this.xpath = data.xpath || '';
         this.type = data.type || C.SELECTOR.TEXT.value;
         
+        this.parent = data.parent || undefined;
         this.selectors = [];
     }
 

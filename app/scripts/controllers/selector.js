@@ -8,12 +8,25 @@
     this.Main.controller('SelectorCtrl', [
         '$scope',
         '$routeParams',
-        'TasksService',
+        'EntitiesService',
         
-        function ($scope, $routeParams, tasksService) {
-            $scope.task = tasksService.find($routeParams.taskId);
-            
+        function ($scope, $routeParams, entitiesService) {
             $scope.adding = true;
+            
+            if($routeParams.selectorId !== undefined) {
+                $scope.selector = entitiesService.find($routeParams.selectorId);
+                $scope.adding = false;
+            }
+            else {
+                $scope.selector = new Selector();
+            }
+            
+            if($scope.adding) {
+                $scope.parent = entitiesService.find($routeParams.parentId);
+            }
+            else {
+                $scope.parent = entitiesService.find($scope.selector.parent);
+            }
             
             $scope.types = [];
             
@@ -21,18 +34,11 @@
                 $scope.types.push(C.SELECTOR[key]);
             }
             
-            console.log($scope.types);
-            
-            if($routeParams.selectorId !== undefined) {
-                $scope.selector = $scope.task.selectors[$routeParams.selectorId];
-                $scope.adding = false;
-            }
-            else {
-                $scope.selector = new Selector();
-            }
-            
             $scope.add = function() {
-                $scope.task.selectors.push($scope.selector);
+                var selectorId = entitiesService.put($scope.selector, 'Selector');
+                
+                $scope.selector.parent = $scope.parent.id;
+                $scope.parent.selectors.push(selectorId);
             };
         }
     ]);

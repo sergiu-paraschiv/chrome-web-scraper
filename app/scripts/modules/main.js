@@ -20,11 +20,15 @@
                     templateUrl: 'app/views/task.html',
                     controller: 'TaskCtrl'
                 })
-                .when('/task/:taskId/selectors', {
-                    templateUrl: 'app/views/taskselectors.html',
-                    controller: 'TaskSelectorsCtrl'
+                .when('/selectors/:parentId', {
+                    templateUrl: 'app/views/selectors.html',
+                    controller: 'SelectorsCtrl'
                 })
-                .when('/task/:taskId/selector/:selectorId?', {
+                .when('/selector/:selectorId', {
+                    templateUrl: 'app/views/selector.html',
+                    controller: 'SelectorCtrl'
+                })
+                .when('/selectors/:parentId/selector', {
                     templateUrl: 'app/views/selector.html',
                     controller: 'SelectorCtrl'
                 })
