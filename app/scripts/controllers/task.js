@@ -7,9 +7,10 @@
         '$scope',
         '$routeParams',
         'EntitiesService',
-        'ScraperService',
+        'DataService',
+        'ScraperQueueService',
         
-        function ($scope, $routeParams, entitiesService, scraperService) {
+        function ($scope, $routeParams, entitiesService, dataService, scraperQueueService) {
             if($routeParams.taskId !== undefined) {
                 $scope.task = entitiesService.find($routeParams.taskId);
             }
@@ -38,8 +39,8 @@
             };
             
             $scope.run = function() {
-                scraperService.run($scope.task, function(data) {
-                    console.log(data);
+                scraperQueueService.run($scope.task, function() {
+                    console.log(dataService.makeTree($scope.task));
                 });
             };
         }

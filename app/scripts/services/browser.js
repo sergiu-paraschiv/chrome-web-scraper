@@ -10,7 +10,7 @@
             var $storage = $localStorage.$default({
                 windowID: undefined,
                 tabID: undefined,
-                cache: {}
+                cache: []
             });
             
             var tabLoadedCallback;
@@ -18,8 +18,13 @@
             
             function ensureCache() {
                 if($storage.cache === undefined) {
-                    $storage.cache = {};
+                    $storage.cache = [];
                 }
+            }
+            
+            function clearCache() {
+                ensureCache();
+                $storage.cache = [];
             }
 
             function listenOnWindows() {
@@ -32,11 +37,14 @@
             }
             
             function listenOnTabs() {
-                tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {                    
+                tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
                     if(tabLoadedCallback !== undefined && tabID === $storage.tabID && changeInfo.status === 'complete') {
-                        getTabDom(function(dom) {
-                            $storage.cache[currentURL] = dom;
-                            tabLoadedCallback.call(undefined, dom);
+                        getTabHTML(function(htmlString) {
+                            $storage.cache.push({
+                                url: currentURL,
+                                htmlString: htmlString
+                            });
+                            tabLoadedCallback.call(undefined, htmlString);
                             tabLoadedCallback = undefined;
                             currentURL = undefined;
                         });
@@ -44,18 +52,30 @@
                 });
             }
             
-            function getTabDom(callback) {
-                tabs.sendMessage(
-                    $storage.tabID,
-                    
-                    {
-                        action: 'getDOM'
-                    },
-                    
-                    function(response) {                        
-                        callback.call(undefined, response.dom);
+            function getTabHTML(callback) {
+                setTimeout(function() {
+                    tabs.sendMessage(
+                        $storage.tabID,
+                        
+                        {
+                            action: 'getDOM'
+                        },
+                        
+                        function(response) {
+                            callback.call(undefined, response.dom);
+                        }
+                    );
+                }, 100);
+            }
+            
+            function getHTMLFromCache(url) {
+                for(var i in $storage.cache) {
+                    if($storage.cache[i].url === url) {
+                        return $storage.cache[i].htmlString;
                     }
-                );
+                }
+                
+                return undefined;
             }
             
             function createWindow(callback) {
@@ -78,7 +98,7 @@
             
             function getWindow(callback) {
                 windows.get(
-                    $storage.windowID,    
+                    $storage.windowID,
                     
                     {
                         populate: true
@@ -106,7 +126,7 @@
             
             function updateTab(url, callback) {
                 tabs.update(
-                    $storage.tabID,                    
+                    $storage.tabID,
                     {
                         url: url
                     }
@@ -117,13 +137,14 @@
             }
             
             function loadURL(url, callback) {
-                var dom = $storage.cache[url];
+                var dom = getHTMLFromCache(url);
+                
                 if(dom !== undefined) {
                     callback.call(undefined, dom);
                 }
                 else {
                     ensureWindow(function(window) {
-                        var tab = window.tabs[0];                    
+                        var tab = window.tabs[0];
                         $storage.tabID = tab.id;
                         updateTab(url, callback);
                     });
@@ -139,7 +160,8 @@
             init();
 
             return {
-                loadURL: loadURL
+                loadURL: loadURL,
+                clearCache: clearCache
             };
         }
     ]);

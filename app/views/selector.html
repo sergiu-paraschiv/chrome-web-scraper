@@ -7,8 +7,15 @@
 
 <div>
     <label>
-        XPath
-        <input type="text" ng-model="selector.xpath" />
+        Query
+        <input type="text" ng-model="selector.query" />
+    </label>
+</div>
+
+<div ng-show="selector.type === 'attribute' || selector.type === 'url'">
+    <label>
+        Attribute
+        <input type="text" ng-model="selector.attribute" />
     </label>
 </div>
 
@@ -24,5 +31,5 @@
 </div>
 
 <a ng-show="adding" href="#/selectors/{{parent.id}}" ng-click="add()">add</a>
-<a ng-show="!adding" href="#/selectors/{{selector.id}}"> | edit selectors</a>
+<a ng-show="!adding && (selector.type === 'element' || selector.type === 'url')" href="#/selectors/{{selector.id}}"> | edit selectors</a>
 <a href="#/selectors/{{parent.id}}"> | back</a>
