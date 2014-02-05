@@ -11,6 +11,7 @@
         function (scraperService, dataService) {
             var queue = [];
             var storedCallback;
+            var runningTasks;
             
             function addSubtask(task) {
                 var self = this;
@@ -25,6 +26,7 @@
             function runSubtask(subtask) {
                 var self = this;
 
+                runningTasks += 1;
                 scraperService.run(subtask, self, function(data) {
                     dataService.put(subtask.url + '-' + subtask.name, data);
                     
@@ -36,6 +38,7 @@
                 var self = this;
                 
                 storedCallback = callback;
+                runningTasks = 1;
                 
                 scraperService.run(task, self, function(data) {
                     dataService.put(task.id, data);
@@ -52,13 +55,18 @@
             
             function handleIsDone() {
                 setTimeout(function() {
-                    if(queue.length === 0 && !scraperService.isLoading()) {
-                        storedCallback.call(undefined);
+                    if(queue.length === 0 && !scraperService.isLoading() && runningTasks === 0) {
+                        if(storedCallback) {
+                            storedCallback.call(undefined);
+                            storedCallback = null;
+                        }
                     }
                     else if(queue.length > 0 && scraperService.calParallelLoad()) {
                         runSubtask.call(self, queue.shift());
                     }
                 }, 100);
+                
+                runningTasks -= 1;
             }
             
             return {

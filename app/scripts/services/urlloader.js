@@ -72,7 +72,6 @@
                                                 url: tabPoolTab.url,
                                                 htmlString: htmlString
                                             });
-                                            
                                             removeTab(tabPoolTab.tabId);
                                             
                                             if(tabPoolTabCallback) {

@@ -19,7 +19,6 @@
             
             function find(entityId) {
                 ensureCollectionExists();
-                
                 return collection[entityId];
             }
             
