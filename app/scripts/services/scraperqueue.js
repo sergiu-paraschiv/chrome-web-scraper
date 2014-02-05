@@ -5,52 +5,45 @@
     var C = this.Constants;
 
     this.Main.factory('ScraperQueueService', [
+        '$rootScope',
         'ScraperService',
         'DataService',
         
-        function (scraperService, dataService) {
+        function ($rootScope, scraperService, dataService) {
             var queue = [];
             var storedCallback;
             var runningTasks;
             
             function addSubtask(task) {
-                var self = this;
-                
                 queue.push(task);
                 
                 if(scraperService.calParallelLoad()) {
-                    runFirstTask.call(self);
+                    runFirstTask();
                 }
             }
             
             function runSubtask(subtask) {
-                var self = this;
-
                 runningTasks += 1;
-                scraperService.run(subtask, self, function(data) {
+                scraperService.run(subtask, function(data) {
                     dataService.put(subtask.url + '-' + subtask.name, data);
                     
-                    handleIsDone.call(self);
+                    handleIsDone();
                 });
             }
         
             function run(task, callback) {
-                var self = this;
-                
                 storedCallback = callback;
                 runningTasks = 1;
                 
-                scraperService.run(task, self, function(data) {
+                scraperService.run(task, function(data) {
                     dataService.put(task.id, data);
                     
-                    handleIsDone.call(self);
+                    handleIsDone();
                 });
             }
             
             function runFirstTask() {
-                var self = this;
-                
-                runSubtask.call(self, queue.shift());
+                runSubtask(queue.shift());
             }
             
             function handleIsDone() {
@@ -62,16 +55,27 @@
                         }
                     }
                     else if(queue.length > 0 && scraperService.calParallelLoad()) {
-                        runSubtask.call(self, queue.shift());
+                        runSubtask(queue.shift());
                     }
                 }, 100);
                 
                 runningTasks -= 1;
             }
             
+            function initialize(callback) {
+                queue = [];
+                dataService.removeAll();
+                scraperService.initialize(callback);
+            }
+            
+            $rootScope.$on('addToScraperQueue', function(e, task) {
+                addSubtask(task);
+            });
+            
             return {
                 run: run,
-                addSubtask: addSubtask
+                addSubtask: addSubtask,
+                initialize: initialize
             };
         }
     ]);

@@ -39,8 +39,10 @@
             };
             
             $scope.run = function() {
-                scraperQueueService.run($scope.task, function() {
-                    console.log(dataService.makeTree($scope.task));
+                scraperQueueService.initialize(function() {
+                    scraperQueueService.run($scope.task, function() {
+                        console.log(dataService.makeTree($scope.task));
+                    });
                 });
             };
         }

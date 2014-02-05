@@ -6,10 +6,11 @@
     var Task = this.Models.Task;
 
     this.Main.factory('ScraperService', [
+        '$rootScope',
         'EntitiesService',
         'URLLoaderService',
         
-        function (entitiesService, urlLoaderService) {
+        function ($rootScope, entitiesService, urlLoaderService) {
         
             function calParallelLoad() {
                 return urlLoaderService.hasAvailableTab();
@@ -26,15 +27,15 @@
                 });
             }
             
-            function runSelectors(parent, dom, queue, task) {
+            function runSelectors(parent, dom, task) {
                 var data = {};
 
                 for(var selectorId in parent.selectors) {
                     var selector = entitiesService.find(parent.selectors[selectorId]);
-                    var selectorData = runSelector(selector, dom, queue, task);
+                    var selectorData = runSelector(selector, dom, task);
                     
                     if(selector.type === C.SELECTOR.ELEMENT.value) {
-                        data[selector.name] = runSelectors(selector, selectorData, queue, task);
+                        data[selector.name] = runSelectors(selector, selectorData, task);
                     }
                     else {
                         data[selector.name] = selectorData;
@@ -44,13 +45,13 @@
                 return data;
             }
             
-            function runSelector(selector, dom, queue, task) {
+            function runSelector(selector, dom, task) {
                 var data = [];
                 
                 var results = $(selector.query, dom);
 
                 results.each(function(resultId, result) {
-                    var selectorData = parseResult(selector, result, queue, task);
+                    var selectorData = parseResult(selector, result, task);
                     if(selectorData !== undefined) {
                         data.push(selectorData);
                     }
@@ -77,7 +78,7 @@
                 }
             }
                     
-            function parseResult(selector, result, queue, task) {
+            function parseResult(selector, result, task) {
                 if(selector.type === C.SELECTOR.TEXT.value) {
                     return $(result).text();
                 }
@@ -91,7 +92,7 @@
                     subTask.selectors = selector.selectors;
                     subTask.name = selector.name;
                     
-                    queue.addSubtask(subTask);
+                    $rootScope.$broadcast('addToScraperQueue', subTask);
                     
                     return subTask.url;
                 }
@@ -102,17 +103,22 @@
                 return undefined;
             }
           
-            function run(task, queue, callback) {
+            function run(task, callback) {
                 ensureDOM(task, function(dom) {
-                    var data = runSelectors(task, dom, queue, task);
+                    var data = runSelectors(task, dom, task);
                     callback.call(undefined, data);
                 });
+            }
+            
+            function initialize(callback) {
+                urlLoaderService.initialize(callback);
             }
             
             return {
                 run: run,
                 calParallelLoad: calParallelLoad,
-                isLoading: isLoading
+                isLoading: isLoading,
+                initialize: initialize
             };
         }
     ]);

@@ -4,7 +4,7 @@
     this.Constants = {
         BROWSER: {
             BLANK_PAGE: 'chrome://newtab',
-            MAX_CONCURRENT_LOADS: 2
+            MAX_CONCURRENT_LOADS: 10
         },
         
         SELECTOR: {

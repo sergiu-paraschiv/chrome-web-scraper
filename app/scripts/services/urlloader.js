@@ -7,14 +7,15 @@
         '$localStorage',
         
         function ($localStorage) {
-        
+            var self = this;
+            
             var $storage = $localStorage.$default({
-                windowID: undefined,
-                cache: []
+                windowID: undefined
             });
             
             var tabPool = [];
             var openedTabs = 0;
+            var window;
             
             function isLoading() {
                 return openedTabs > 0;
@@ -22,17 +23,6 @@
 
             function hasAvailableTab() {
                 return openedTabs < C.BROWSER.MAX_CONCURRENT_LOADS;
-            }
-            
-            function ensureCache() {
-                if($storage.cache === undefined) {
-                    $storage.cache = [];
-                }
-            }
-            
-            function clearCache() {
-                ensureCache();
-                $storage.cache = [];
             }
 
             function listenOnWindows() {
@@ -53,6 +43,24 @@
                 }
             }
             
+            function handleTabDataLoaded(tab) {
+                getTabHTML(
+                    tab.tabId,
+                    function(htmlString) {
+                        var tabPoolTabCallback = tab.callback;
+
+                        removeTab(tab.tabId);
+                        
+                        if(tabPoolTabCallback) {
+                            tabPoolTabCallback.call(undefined, htmlString);
+                        }
+                    },
+                    function(error) {
+                        removeTab(tab.tabId);
+                    }
+                );
+            }
+            
             function listenOnTabs() {
                 tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 
@@ -61,28 +69,7 @@
                         for(var i in tabPool) {
 
                             if(tabPool[i].tabId === tabId && tabPool[i].url !== null) {
-                                (function(tabPoolTab) {
-                                    
-                                    getTabHTML(
-                                        tabPoolTab.tabId,
-                                        function(htmlString) {
-                                            var tabPoolTabCallback = tabPoolTab.callback;
-                                            
-                                            $storage.cache.push({
-                                                url: tabPoolTab.url,
-                                                htmlString: htmlString
-                                            });
-                                            removeTab(tabPoolTab.tabId);
-                                            
-                                            if(tabPoolTabCallback) {
-                                                tabPoolTabCallback.call(undefined, htmlString);
-                                            }
-                                        },
-                                        function(error) {
-                                            removeTab(tabPoolTab.tabId);
-                                        }
-                                    );
-                                }).call(undefined, tabPool[i]);
+                                handleTabDataLoaded.call(undefined, tabPool[i]);
                             }
                         }
                     }
@@ -108,17 +95,7 @@
                     );
                 }, 300);
             }
-            
-            function getHTMLFromCache(url) {
-                for(var i in $storage.cache) {
-                    if($storage.cache[i].url === url) {
-                        return $storage.cache[i].htmlString;
-                    }
-                }
-                
-                return undefined;
-            }
-            
+
             function createWindow(callback) {
                 windows.create(
                     {
@@ -187,39 +164,38 @@
             }
             
             function loadURL(url, callback) {
-                var dom = getHTMLFromCache(url);
+                openedTabs += 1;
                 
-                if(dom !== undefined) {
-                    callback.call(undefined, dom);
-                }
-                else {
-                    openedTabs += 1;
-                    ensureWindow(function(w) {
-                        ensureTab(w, function(tab) {
-                            tabPool.push({
-                                tabId: tab.id,
-                                url: url,
-                                callback: callback
-                            });
-                            updateTab(tab.id, url);
-                        });
+                ensureTab(self.window, function(tab) {
+                    tabPool.push({
+                        tabId: tab.id,
+                        url: url,
+                        callback: callback
                     });
-                }
+                    updateTab(tab.id, url);
+                });
             }
             
-            function init() {
-                ensureCache();
+            function initialize(callback) {
+                ensureWindow(function(window) {
+                    self.window = window;
+                    
+                    callback.call(undefined);
+                });
+            }
+            
+            function start() {
                 listenOnWindows();
                 listenOnTabs();
             }
             
-            init();
+            start();
 
             return {
                 loadURL: loadURL,
-                clearCache: clearCache,
                 hasAvailableTab: hasAvailableTab,
-                isLoading: isLoading
+                isLoading: isLoading,
+                initialize: initialize
             };
         }
     ]);
