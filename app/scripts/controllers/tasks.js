@@ -4,13 +4,13 @@
     this.Main.controller('TasksCtrl', [
         '$scope',
         'EntitiesService',
-        'BrowserService',
+        'URLLoaderService',
         
-        function ($scope, entitiesService, browserService) {
+        function ($scope, entitiesService, urlLoaderService) {
             $scope.tasks = entitiesService.query('Task');
             
             $scope.clearCache = function() {
-                browserService.clearCache();
+                urlLoaderService.clearCache();
             };
         }
     ]);

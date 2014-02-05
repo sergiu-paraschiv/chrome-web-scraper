@@ -10,39 +10,55 @@
         
         function (scraperService, dataService) {
             var queue = [];
+            var storedCallback;
             
             function addSubtask(task) {
+                var self = this;
+                
                 queue.push(task);
+                
+                if(scraperService.calParallelLoad()) {
+                    runFirstTask.call(self);
+                }
             }
             
-            function runSubtask(subtask, callback) {
+            function runSubtask(subtask) {
                 var self = this;
 
                 scraperService.run(subtask, self, function(data) {
                     dataService.put(subtask.url + '-' + subtask.name, data);
                     
-                    if(queue.length > 0) {
-                        runSubtask.call(self, queue.shift(), callback);
-                    }
-                    else {
-                        callback.call(undefined);
-                    }
+                    handleIsDone.call(self);
                 });
             }
         
             function run(task, callback) {
                 var self = this;
                 
+                storedCallback = callback;
+                
                 scraperService.run(task, self, function(data) {
                     dataService.put(task.id, data);
                     
-                    if(queue.length > 0) {
-                        runSubtask.call(self, queue.shift(), callback);
-                    }
-                    else {
-                        callback.call(undefined);
-                    }
+                    handleIsDone.call(self);
                 });
+            }
+            
+            function runFirstTask() {
+                var self = this;
+                
+                runSubtask.call(self, queue.shift());
+            }
+            
+            function handleIsDone() {
+                setTimeout(function() {
+                    if(queue.length === 0 && !scraperService.isLoading()) {
+                        storedCallback.call(undefined);
+                    }
+                    else if(queue.length > 0 && scraperService.calParallelLoad()) {
+                        runSubtask.call(self, queue.shift());
+                    }
+                }, 100);
             }
             
             return {

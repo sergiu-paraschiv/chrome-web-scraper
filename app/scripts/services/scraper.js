@@ -7,14 +7,21 @@
 
     this.Main.factory('ScraperService', [
         'EntitiesService',
-        'BrowserService',
+        'URLLoaderService',
         
-        function (entitiesService, browserService) {
+        function (entitiesService, urlLoaderService) {
         
+            function calParallelLoad() {
+                return urlLoaderService.hasAvailableTab();
+            }
+            
+            function isLoading() {
+                return urlLoaderService.isLoading();
+            }
+            
             function ensureDOM(task, callback) {
-                browserService.loadURL(task.url, function(htmlString) {
+                urlLoaderService.loadURL(task.url, function(htmlString) {
                     var doc = (new DOMParser()).parseFromString(htmlString, 'text/html');
-
                     callback.call(undefined, doc);
                 });
             }
@@ -79,7 +86,7 @@
                 }
                 else if(selector.type === C.SELECTOR.URL.value) {
                 
-                    var subTask = new Task();                    
+                    var subTask = new Task();
                     subTask.url = ensureAbsoluteURL(task.url, $(result).attr(selector.attribute));
                     subTask.selectors = selector.selectors;
                     subTask.name = selector.name;
@@ -98,13 +105,14 @@
             function run(task, queue, callback) {
                 ensureDOM(task, function(dom) {
                     var data = runSelectors(task, dom, queue, task);
-
                     callback.call(undefined, data);
                 });
             }
             
             return {
-                run: run
+                run: run,
+                calParallelLoad: calParallelLoad,
+                isLoading: isLoading
             };
         }
     ]);
