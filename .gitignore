@@ -1,5 +1,2 @@
 /node_modules
-/app/components
-/build
-/.tmp
 npm-debug.log
