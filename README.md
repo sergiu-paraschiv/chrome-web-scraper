@@ -14,5 +14,5 @@ grunt build
 Run tests:
 --------------
 ```sh
-grunt
+grunt test
 ```

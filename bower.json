@@ -1,0 +1,7 @@
+{
+  "name": "chrome-web-scraper",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "extend.js": "https://github.com/searls/extend.js/releases/download/0.1.0/extend.js"
+  }
+}

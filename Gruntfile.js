@@ -18,7 +18,11 @@ module.exports = function(grunt) {
         
         jasmine: {
             pivotal: {
-                src: 'app/scripts/**/*.js',
+                src: [
+                    'app/components/lodash/dist/lodash.js',
+                    'app/components/extend.js/index.js',
+                    'app/scripts/**/*.js'
+                ],
                 options: {
                     specs: 'spec/*Spec.js'
                 }
