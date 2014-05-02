@@ -15,39 +15,25 @@ module.exports = function(grunt) {
                 pushTo: 'origin'
             }
         },
-        
-        jasmine: {
-            pivotal: {
-                src: [
-                    'app/components/lodash/dist/lodash.js',
-                    'app/components/extend.js/index.js',
-                    'app/scripts/**/*.js'
-                ],
-                options: {
-                    specs: 'spec/*Spec.js'
-                }
-            }
-        },
+
 
         jshint: {
-            all: ['app/scripts/**/*.js']
+            all: ['components/scripts/**/*.js']
         },
         
         watch: {
-            files: ['app/scripts/**/*.js', 'spec/*Spec.js'],
-            tasks: ['jshint', 'jasmine']
+            files: ['components/scripts/**/*.js'],
+            tasks: ['jshint']
         }
 
     });
 
     grunt.loadNpmTasks('grunt-bump');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('test', [
-        'jshint',
-        'jasmine'
+        'jshint'
     ]);
     
     grunt.registerTask('run', [

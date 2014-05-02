@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Web Scraper</title>
+        
+    </head>
+    
+    <body ng-app="Task">
+        <div ui-view="content"></div>
+        
+        <script src="components/libs/lodash/dist/lodash.js"></script>
+        <script src="components/libs/extend.js/index.js"></script>
+        <script src="components/libs/db.js/src/db.js"></script>
+        <script src="components/libs/angular/angular.js"></script>
+        <script src="components/libs/angular-ui-router/release/angular-ui-router.js"></script>
+
+        <script src="components/scripts/App.js"></script>
+        <script src="components/scripts/Config.js"></script>
+        
+        <script src="components/scripts/Tools/Array.js"></script>
+        <script src="components/scripts/Tools/Object.js"></script>
+        
+        <script src="components/scripts/Modules/Base.js"></script>
+        <script src="components/scripts/Modules/Popup.js"></script>
+        <script src="components/scripts/Modules/Task.js"></script>
+        
+        <script src="components/scripts/Models/Task.js"></script>
+
+        <script src="components/scripts/Mappers/Tasks.js"></script>
+        
+        <script src="components/scripts/Services/Storage.js"></script>
+        <script src="components/scripts/Services/Tasks.js"></script>
+        
+        <script src="components/scripts/Controllers/Popup/Home.js"></script>
+        <script src="components/scripts/Controllers/Task/Add.js"></script>
+        <script src="components/scripts/Controllers/Task/Edit.js"></script>
+    </body>
+    
+</html>
+

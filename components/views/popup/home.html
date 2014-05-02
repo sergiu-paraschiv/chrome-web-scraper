@@ -1,0 +1,8 @@
+<ul>
+    <li ng-repeat="task in tasks">
+        <a href="" ng-click="edit(task.id)">{{task.name}}</a>
+        <a href="" ng-click="remove(task.id)">[x]</a>
+    </li>
+</ul>
+
+<a href="" ng-click="add()">Add new task</a>

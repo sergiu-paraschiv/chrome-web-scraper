@@ -1,0 +1,34 @@
+{
+    "manifest_version": 2,
+
+    "name": "Web Scraper",
+    "description": "This extension can scrape web pages.",
+    "version": "0.1",
+    
+    "browser_action": {
+        "default_icon": "icon.24.png",
+        "default_popup": "popup.html"
+    },
+    
+    "permissions": [
+        "tabs"
+    ],
+    
+    "background": {
+        "scripts": [
+            "components/scripts/Background.js"
+        ]
+    }
+  
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+             ],
+            
+            "js": [
+                "components/scripts/Dom.js"
+            ]
+        }
+    ]
+}
